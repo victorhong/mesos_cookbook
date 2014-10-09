@@ -29,18 +29,18 @@ zk_path = ''
 
 template '/etc/default/mesos' do
   source 'mesos.erb'
-  variables(
-    logs_dir: node['mesos']['logs_dir'],
-  )
+  variables({
+    :logs_dir => node['mesos']['logs_dir'],
+  })
   notifies :run, 'bash[restart-mesos-slave]', :delayed
 end
 
 template '/etc/default/mesos-slave' do
   source 'mesos-slave.erb'
-  variables(
-    work_dir: node['mesos']['work_dir'],
-    isolation_type: node['mesos']['isolation_type'],
-  )
+  variables({
+    :work_dir => node['mesos']['work_dir'],
+    :isolation_type => node['mesos']['isolation_type'],
+  })
   notifies :run, 'bash[restart-mesos-slave]', :delayed
 end
 
@@ -65,25 +65,25 @@ unless zk_server_list.count == 0 && zk_port.empty? && zk_path.empty?
 
   template '/etc/mesos/zk' do
     source 'zk.erb'
-    variables(
-      zookeeper_server_list: zk_server_list,
-      zookeeper_port: zk_port,
-      zookeeper_path: zk_path,
-    )
+    variables({
+      :zookeeper_server_list => zk_server_list,
+      :zookeeper_port => zk_port,
+      :zookeeper_path => zk_path,
+    })
     notifies :run, 'bash[restart-mesos-slave]', :delayed
   end
 end
 
 template '/usr/local/var/mesos/deploy/mesos-slave-env.sh.template' do
   source 'mesos-slave-env.sh.template.erb'
-  variables(
-    zookeeper_server_list: zk_server_list,
-    zookeeper_port: zk_port,
-    zookeeper_path: zk_path,
-    logs_dir: node['mesos']['logs_dir'],
-    work_dir: node['mesos']['work_dir'],
-    isolation_type: node['mesos']['isolation_type'],
-  )
+  variables({
+    :zookeeper_server_list => zk_server_list,
+    :zookeeper_port => zk_port,
+    :zookeeper_path => zk_path,
+    :logs_dir => node['mesos']['logs_dir'],
+    :work_dir => node['mesos']['work_dir'],
+    :isolation_type => node['mesos']['isolation_type'],
+  })
   notifies :run, 'bash[restart-mesos-slave]', :delayed
 end
 
@@ -106,9 +106,9 @@ end
 # This ensures that mesos-slave is started on restart
 template '/etc/init/mesos-slave.conf' do
   source 'mesos-slave.conf.erb'
-  variables(
-    action: 'start',
-  )
+  variables({
+    :action => 'start',
+  })
   notifies :run, 'bash[reload-configuration]'
 end
 

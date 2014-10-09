@@ -55,7 +55,7 @@ when 'debian', 'ubuntu'
     source "#{Chef::Config[:file_cache_path]}/mesos.deb"
     not_if { ::File.exist? '/usr/local/sbin/mesos-master' }
   end
-when 'rhel', 'centos', 'amazon', 'scientific'
+when 'redhat', 'centos', 'amazon', 'scientific'
   %w( unzip libcurl ).each do |pkg|
     yum_package pkg do
       action :install
@@ -98,18 +98,18 @@ end
 # Running mesos::master recipe will reset this to 'start'
 template '/etc/init/mesos-master.conf' do
   source 'mesos-master.conf.erb'
-  variables(
-    action: 'stop',
-  )
+  variables({
+    :action => 'stop'
+  })
 end
 
 # Set init to 'stop' by default for mesos slave.
 # Running mesos::slave recipe will reset this to 'start'
 template '/etc/init/mesos-slave.conf' do
   source 'mesos-slave.conf.erb'
-  variables(
-    action: 'stop',
-  )
+  variables({
+    :action => 'stop'
+  })
 end
 
 if distro == 'debian'
